@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Exportación de Vinos</title>
+  <style>
+    body {
+      font-family: Calibri, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f9f9f9;
+    }
+    .header {
+      background-color: #800000;
+      color: white;
+      padding: 20px;
+      text-align: center;
+      font-size: 26px;
+      font-weight: bold;
+    }
+    .header::before {
+      content: "🍇 ";
+    }
+    .container {
+      max-width: 900px;
+      margin: 30px auto;
+      padding: 0 20px;
+    }
+    .info-box {
+      background-color: #f1f1f1;
+      border-left: 4px solid #800000;
+      padding: 16px;
+      margin-bottom: 20px;
+    }
+    ul, ol {
+      line-height: 1.8;
+    }
+    .button-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    button {
+      background-color: #800000;
+      color: white;
+      border: none;
+      padding: 10px 16px;
+      font-size: 14px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #a52a2a;
+    }
+    textarea, input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0 16px 0;
+      box-sizing: border-box;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    hr {
+      border: none;
+      border-top: 2px solid #cccccc;
+      margin: 30px 0 20px;
+    }
+    label {
+      font-weight: bold;
+    }
+    .attribute-group {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+      margin-bottom: 20px;
+    }
+    .wine-table {
+      width: 100%;
+      border-collapse: collapse;
+      background-color: #fff;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      border-radius: 8px;
+      overflow: hidden;
+      margin-bottom: 30px;
+    }
+    .wine-table caption {
+      background-color: #800000;
+      color: #fff;
+      font-weight: bold;
+      font-size: 16px;
+      padding: 12px;
+    }
+    .wine-table td {
+      padding: 12px;
+      vertical-align: middle;
+      border-bottom: 1px solid #ddd;
+    }
+    .wine-table img {
+      width: 40px;
+      height: 40px;
+      object-fit: contain;
+      margin-right: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">Creador de Iconografía Vinos</div>
+  <div class="container">
+    <div class="info-box">
+      <p><strong>Pasos para usar la herramienta:</strong></p>
+      <ol>
+        <li>Ingrese los SKUs y los atributos para cada vino en los campos indicados.</li>
+        <li>Utilice las URLs por defecto o reemplace con imágenes propias.</li>
+        <li>Presione <strong>Actualizar Tablas</strong> para visualizar la ficha técnica.</li>
+        <li>Use <strong>Exportar HTML a Excel</strong> para obtener el archivo con el contenido.</li>
+        <li>Para comenzar desde cero o reutilizar, puede <strong>descargar una plantilla</strong>.</li>
+      </ol>
+    </div>
+
+    <div class="button-group">
+      <button onclick="updateTables()">🔄 Actualizar Tablas</button>
+      <button onclick="exportHtmlToExcel()">📄 Exportar HTML a Excel</button>
+      <button onclick="downloadTemplate()">⬇️ Descargar Plantilla</button>
+      <input type="file" id="importFile" accept=".xlsx" onchange="importExcel()" />
+    </div>
+
+    <form id="updateForm">
+      <div class="attribute-group">
+        <label for="sku">SKU:</label>
+        <textarea id="sku" rows="4" placeholder="Ej: 123456\n654321"></textarea>
+      </div>
+      <hr>
+      <div class="attribute-group">
+        <label for="nombreImgUrl">👤 URL Imagen Nombre:</label>
+        <input type="text" id="nombreImgUrl" value="https://storagecencosud.blob.core.windows.net/nathaly/nombre.png">
+        <label for="nombre">Nombre:</label>
+        <textarea id="nombre" rows="4" placeholder="Ej: Vino Carmenere Reserva"></textarea>
+      </div>
+      <div class="attribute-group">
+        <label for="maridajeImgUrl">🍽 URL Imagen Maridaje:</label>
+        <input type="text" id="maridajeImgUrl" value="https://storagecencosud.blob.core.windows.net/nathaly/maridaje.png">
+        <label for="maridaje">Maridaje:</label>
+        <textarea id="maridaje" rows="4" placeholder="Ej: Carnes rojas, pastas"></textarea>
+      </div>
+      <div class="attribute-group">
+        <label for="aromaImgUrl">🌸 URL Imagen Aroma:</label>
+        <input type="text" id="aromaImgUrl" value="https://storagecencosud.blob.core.windows.net/nathaly/aroma.png">
+        <label for="aroma">Aroma:</label>
+        <textarea id="aroma" rows="4" placeholder="Ej: Frutos rojos, especias"></textarea>
+      </div>
+      <div class="attribute-group">
+        <label for="saborImgUrl">🥛 URL Imagen Sabor:</label>
+        <input type="text" id="saborImgUrl" value="https://storagecencosud.blob.core.windows.net/nathaly/sabor.png">
+        <label for="sabor">Sabor en boca:</label>
+        <textarea id="sabor" rows="4" placeholder="Ej: Taninos suaves, final persistente"></textarea>
+      </div>
+      <div class="attribute-group">
+        <label for="colorImgUrl">🌟 URL Imagen Color:</label>
+        <input type="text" id="colorImgUrl" value="https://storagecencosud.blob.core.windows.net/nathaly/color.png">
+        <label for="color">Color:</label>
+        <textarea id="color" rows="4" placeholder="Ej: Rojo rubí, violáceo"></textarea>
+      </div>
+      <div class="attribute-group">
+        <label for="temperaturaImgUrl">❄️ URL Imagen Temperatura:</label>
+        <input type="text" id="temperaturaImgUrl" value="https://storagecencosud.blob.core.windows.net/nathaly/temperatura.png">
+        <label for="temperatura">Temperatura:</label>
+        <textarea id="temperatura" rows="4" placeholder="Ej: Servir entre 16°C y 18°C"></textarea>
+      </div>
+      <div class="attribute-group">
+        <button type="button" onclick="clearForm()">Limpiar</button>
+      </div>
+    </form>
+
+    <div id="tablesContainer"></div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
+  <script>
+    function clearForm() {
+      document.getElementById("updateForm").reset();
+    }
+
+    function downloadTemplate() {
+      const wb = XLSX.utils.book_new();
+      const ws = XLSX.utils.json_to_sheet([{
+        SKU: '', Nombre: '', Maridaje: '', Aroma: '',
+        "Sabor en boca": '', Color: '', Temperatura: '',
+        "URL Imagen Nombre": '', "URL Imagen Maridaje": '', "URL Imagen Aroma": '',
+        "URL Imagen Sabor": '', "URL Imagen Color": '', "URL Imagen Temperatura": ''
+      }]);
+      XLSX.utils.book_append_sheet(wb, ws, "Plantilla");
+      XLSX.writeFile(wb, "plantilla_vinos.xlsx");
+    }
+
+    function exportHtmlToExcel() {
+      if (!window.generatedHtmlData || window.generatedHtmlData.length === 0) {
+        alert("Debe generar las tablas primero");
+        return;
+      }
+      const wb = XLSX.utils.book_new();
+      const wsData = window.generatedHtmlData.map(row => ({ SKU: row.SKU, HTML: row.HTML }));
+      const ws = XLSX.utils.json_to_sheet(wsData);
+      XLSX.utils.book_append_sheet(wb, ws, "Vinos Exportados");
+      XLSX.writeFile(wb, "vinos_exportados.xlsx");
+    }
+
+    function importExcel() {
+      const fileInput = document.getElementById('importFile');
+      const file = fileInput.files[0];
+      if (!file) {
+        alert("Seleccione un archivo .xlsx primero");
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        const data = new Uint8Array(e.target.result);
+        const workbook = XLSX.read(data, { type: 'array' });
+        const sheetName = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[sheetName];
+        const jsonData = XLSX.utils.sheet_to_json(worksheet);
+        if (jsonData.length === 0) {
+          alert("El archivo está vacío o no tiene datos válidos.");
+          return;
+        }
+        const requiredColumns = ['SKU', 'Nombre', 'Maridaje', 'Aroma', 'Sabor en boca', 'Color', 'Temperatura'];
+        const firstRow = Object.keys(jsonData[0]);
+        const missingCols = requiredColumns.filter(col => !firstRow.includes(col));
+        if (missingCols.length > 0) {
+          alert("Faltan las siguientes columnas en el archivo: " + missingCols.join(", "));
+          return;
+        }
+        const skus = [], nombres = [], maridajes = [], aromas = [], sabores = [], colores = [], temperaturas = [];
+        jsonData.forEach(row => {
+          skus.push(row['SKU'] || '');
+          nombres.push(row['Nombre'] || '');
+          maridajes.push(row['Maridaje'] || '');
+          aromas.push(row['Aroma'] || '');
+          sabores.push(row['Sabor en boca'] || '');
+          colores.push(row['Color'] || '');
+          temperaturas.push(row['Temperatura'] || '');
+        });
+        document.getElementById('sku').value = skus.join("\n");
+        document.getElementById('nombre').value = nombres.join("\n");
+        document.getElementById('maridaje').value = maridajes.join("\n");
+        document.getElementById('aroma').value = aromas.join("\n");
+        document.getElementById('sabor').value = sabores.join("\n");
+        document.getElementById('color').value = colores.join("\n");
+        document.getElementById('temperatura').value = temperaturas.join("\n");
+        alert(`Se cargaron ${jsonData.length} registros desde Excel. Ahora puedes presionar "Actualizar Tablas".`);
+      };
+      reader.readAsArrayBuffer(file);
+    }
+
+    function updateTables() {
+      const sku = document.getElementById('sku').value.trim().split('\n');
+      const nombreImgUrl = document.getElementById('nombreImgUrl').value.trim();
+      const nombre = document.getElementById('nombre').value.trim().split('\n');
+      const maridajeImgUrl = document.getElementById('maridajeImgUrl').value.trim();
+      const maridaje = document.getElementById('maridaje').value.trim().split('\n');
+      const aromaImgUrl = document.getElementById('aromaImgUrl').value.trim();
+      const aroma = document.getElementById('aroma').value.trim().split('\n');
+      const saborImgUrl = document.getElementById('saborImgUrl').value.trim();
+      const sabor = document.getElementById('sabor').value.trim().split('\n');
+      const colorImgUrl = document.getElementById('colorImgUrl').value.trim();
+      const color = document.getElementById('color').value.trim().split('\n');
+      const temperaturaImgUrl = document.getElementById('temperaturaImgUrl').value.trim();
+      const temperatura = document.getElementById('temperatura').value.trim().split('\n');
+      const tablesContainer = document.getElementById('tablesContainer');
+      tablesContainer.innerHTML = '';
+      const htmlData = [];
+      if ([nombre, maridaje, aroma, sabor, color, temperatura].some(arr => arr.length !== sku.length)) {
+        alert("Todos los campos deben tener la misma cantidad de filas que los SKUs");
+        return;
+      }
+      sku.forEach((item, index) => {
+        
+const inlineStyle = {
+  table: 'width:100%; border-collapse:collapse; background-color:#fff; border:1px solid #ddd; font-family:Calibri, sans-serif;',
+  caption: 'background-color:#800000; color:#fff; font-weight:bold; font-size:16px; padding:12px;',
+  td: 'padding:12px; vertical-align:middle; border-bottom:1px solid #ddd;',
+  img: 'width:40px; height:40px; object-fit:contain; margin-right:10px;'
+};
+
+const html = `
+  <table style="${inlineStyle.table}">
+    <caption style="${inlineStyle.caption}">Nuestros Vinos | Ficha técnica y notas de cata</caption>
+    <tr><td style="${inlineStyle.td}"><img src="${nombreImgUrl}" style="${inlineStyle.img}" alt="Nombre"></td><td style="${inlineStyle.td}"><strong>Nombre:</strong> ${nombre[index] || ''}</td></tr>
+    <tr><td style="${inlineStyle.td}"><img src="${maridajeImgUrl}" style="${inlineStyle.img}" alt="Maridaje"></td><td style="${inlineStyle.td}"><strong>Maridaje:</strong> ${maridaje[index] || ''}</td></tr>
+    <tr><td style="${inlineStyle.td}"><img src="${aromaImgUrl}" style="${inlineStyle.img}" alt="Aroma"></td><td style="${inlineStyle.td}"><strong>Aroma:</strong> ${aroma[index] || ''}</td></tr>
+    <tr><td style="${inlineStyle.td}"><img src="${saborImgUrl}" style="${inlineStyle.img}" alt="Sabor en boca"></td><td style="${inlineStyle.td}"><strong>Sabor en boca:</strong> ${sabor[index] || ''}</td></tr>
+    <tr><td style="${inlineStyle.td}"><img src="${colorImgUrl}" style="${inlineStyle.img}" alt="Color"></td><td style="${inlineStyle.td}"><strong>Color:</strong> ${color[index] || ''}</td></tr>
+    <tr><td style="${inlineStyle.td}"><img src="${temperaturaImgUrl}" style="${inlineStyle.img}" alt="Temperatura"></td><td style="${inlineStyle.td}"><strong>Temperatura:</strong> ${temperatura[index] || ''}</td></tr>
+  </table>`;
+
+        tablesContainer.innerHTML += html;
+        htmlData.push({ SKU: item, HTML: html });
+      });
+      window.generatedHtmlData = htmlData;
+    }
+  </script>
+</body>
+</html>
